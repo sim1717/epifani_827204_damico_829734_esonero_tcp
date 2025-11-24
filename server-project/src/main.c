@@ -1,5 +1,5 @@
 #if defined WIN32
-#include <winsock2.h>
+#include <winsock.h>
 #else
 #include <string.h>
 #include <unistd.h>
@@ -148,3 +148,4 @@ int main(int argc, char *argv[]) {
 	}
 
 } // main end
+
