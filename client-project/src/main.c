@@ -25,11 +25,9 @@ void errorhandler(char *errorMessage) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 3 || strcmp(argv[1], "-r") != 0) {
-        printf("Usage: %s -r \"type city\"\n", argv[0]);
-        printf("Esempio: %s -r \"t bari\"\n", argv[0]);
-        return -1;
-    }
+
+
+
 #if defined WIN32
 	// Initialize Winsock
 	WSADATA wsa_data;
@@ -66,9 +64,13 @@ int main(int argc, char *argv[]) {
 	}
 
 	weather_request_t wr;
+	memset(&wr, 0, sizeof(wr));
+	int found_r = 0;
+
 	// Parsing corretto per gestire "p Reggio Calabria"
 	for (int i = 1; i < argc; i++) {
 	    if (strcmp(argv[i], "-r") == 0 && i + 1 < argc) {
+	    	found_r = 1;
 	        char *request_str = argv[++i];
 
 	        // Prendi il primo carattere come type
@@ -86,7 +88,11 @@ int main(int argc, char *argv[]) {
 
 	    }
 	}
-
+	if (!found_r || strlen(wr.city) == 0) {
+	    printf("Usage: %s -r \"type city\"\n", argv[0]);
+	    printf("Esempio: %s -r \"t bari\"\n", argv[0]);
+	    return 0;
+	}
 	// send data to server
 	if (send(c_socket, (char *)&wr, sizeof(weather_request_t), 0) != sizeof(weather_request_t)) {
 		errorhandler("send() sent a different number of bytes than expected");
@@ -129,9 +135,9 @@ int main(int argc, char *argv[]) {
 	case 2:printf("Richiesta non valida");
 	break;
 	}
+
 	printf("\n");
 	closesocket(c_socket);
 	clearwinsock();
 	return 0;
 } // main end
-
